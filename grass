@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ "$#" -ne "2" ]; then
+  echo "usage: grass <day-before> <commit-count>"
+  exit 1
+fi
+
+if [ ! -d "plantes" ]; then
+  echo "[info] no 'plantes' directory found, creating one"
+  mkdir plantes
+fi
+
+dirname=$(date -v-${1}d "+%Y-%m-%d")
+
+if [ ! -d "plantes/$dirname" ]; then
+  echo "[info] no ${dirname} directory found, creating one"
+  mkdir "plantes/$dirname"
+fi
+
+for i in $(seq 1 $2); do
+  touch "plantes/$dirname/plant_$i"
+  echo "🌱" > "plantes/$dirname/plant_$i"
+  git add "plantes/$dirname/plant_$i"
+  git commit --date "$1 days ago" -m "day $1: plant $i"
+done
+
+git push
